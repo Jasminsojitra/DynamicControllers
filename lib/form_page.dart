@@ -1,0 +1,353 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import 'control_model.dart';
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late ControlsModel controlModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var data = {
+      "form": {
+        "id": "12318391",
+        "header": "Header of the form",
+        "controls": [
+          {
+            "name": "Name of Project",
+            "type": "Textbox",
+            "header": "Project",
+            "values": [],
+            "defaultValue": "test",
+          },
+          {
+            "name": "Description",
+            "type": "TextArea",
+            "header": "Project Description",
+            "values": [],
+            "defaultValue": "",
+          },
+          {
+            "name": "Coutries",
+            "type": "Dropdown",
+            "header": "Select Countries",
+            "values": [
+              "India",
+              "US",
+              "UK",
+            ],
+            "defaultValue": ""
+          },
+          {
+            "name": "Country rank",
+            "type": "RadioButton",
+            "header": "Ranking",
+            "values": [
+              "1",
+              "3",
+            ],
+            "defaultValue": "1",
+          },
+          {
+            "name": "Hobbies",
+            "type": "CheckBox",
+            "header": "Hobbies",
+            "values": [
+              "Reading",
+              "Cricket",
+              "Footbool",
+            ],
+            "selectedValues": [
+              "Cricket",
+            ],
+          },
+          {
+            "name": "Birth Date",
+            "type": "Date",
+            "header": "Birth Date",
+            "values": [],
+            "defaultValue": "",
+            "minDate": "1996-05-18",
+            "maxDate": "",
+          },
+        ]
+      }
+    };
+    controlModel = ControlsModel.fromJson(data);
+    print(controlModel);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
+    return Scaffold(
+      appBar: AppBar(
+        // TRY THIS: Try changing the color here to a specific color (to
+        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+        // change color while the other colors stay the same.
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(controlModel.form.header),
+      ),
+      body: ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(20),
+          itemCount: controlModel.form.controls.length,
+          itemBuilder: (BuildContext context, int index) {
+            var control = controlModel.form.controls[index];
+            if (control.type == 'Textbox') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(hintText: control.name),
+                    initialValue: control.defaultValue ?? '',
+                    onChanged: (value) {
+                      control.defaultValue = value;
+                    },
+                  )
+                ],
+              );
+            } else if (control.type == 'TextArea') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(hintText: control.name),
+                    initialValue: control.defaultValue ?? '',
+                    minLines: 3,
+                    maxLines: 5,
+                    onChanged: (value) {
+                      control.defaultValue = value;
+                    },
+                  )
+                ],
+              );
+            } else if (control.type == 'RadioButton') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: control.values!.length,
+                      itemBuilder: (context, indexVal) {
+                        var valuesData = control.values![indexVal];
+                        return Row(
+                          children: <Widget>[
+                            Radio<String>(
+                              value: valuesData,
+                              groupValue: control.defaultValue,
+                              onChanged: (val) {
+                                control.defaultValue = val;
+                                setState(() {});
+                              },
+                            ),
+                            Text(valuesData),
+                          ],
+                        );
+                      })
+                ],
+              );
+            } else if (control.type == 'CheckBox') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: control.values!.length,
+                      itemBuilder: (context, indexVal) {
+                        var valuesData = control.values![indexVal];
+                        var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
+                        return CheckboxListTile(
+                          title: Text(valuesData),
+                          value: selectedValue == null ? false : true,
+                          onChanged: (val) {
+                            setState(() {
+                              var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
+                              if (selectedValue == null) {
+                                control.selectedValues!.add(valuesData);
+                              } else {
+                                control.selectedValues!.remove(selectedValue);
+                              }
+                            });
+                          },
+                        );
+                      })
+                ],
+              );
+            } else if (control.type == 'Dropdown') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(hintText: control.name),
+                    value: control.defaultValue!.isEmpty ? null : control.defaultValue,
+                    items: control.values!
+                        .map((value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      control.defaultValue = value;
+                    },
+                  )
+                ],
+              );
+            } else if (control.type == 'Date') {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    control.header ?? '',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(hintText: control.name),
+                    readOnly: true,
+                    //initialValue: control.defaultValue ?? '',
+                    controller: TextEditingController(text: control.defaultValue ?? ''),
+                    onTap: () async {
+                      try {
+                        DateFormat inputFormat = DateFormat('yyyy-MM-dd');
+                        var date = DateTime.now();
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: control.defaultValue!.isEmpty ? date : inputFormat.parse(control.defaultValue!),
+                          firstDate: control.minDate!.isEmpty
+                              ? (DateTime.now())
+                              : DateTime.parse(control.minDate!), //DateTime.now() - not to allow to choose before today.
+                          lastDate: control.maxDate!.isEmpty ? (DateTime.now()) : DateTime.parse(control.maxDate!),
+                        );
+                        if (pickedDate != null) {
+                          print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                          String formattedDate = inputFormat.format(pickedDate);
+                          print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                          //you can implement different kind of Date Format here according to your requirement
+                          //_dateController.text = formattedDate;
+                          setState(() {
+                            control.defaultValue = formattedDate;
+                          });
+                        } else {
+                          print("Date is not selected");
+                        }
+                      } catch (ex) {
+                        print(ex);
+                      }
+                    },
+                  )
+                ],
+              );
+            } else {
+              return Container();
+            }
+          }),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+              padding: EdgeInsets.all(15),
+              backgroundColor: Colors.deepPurple,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              )),
+          child: const Text(
+            "Submit",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          onPressed: () {
+            print("Data");
+            print(jsonEncode(controlModel.form.controls));
+          },
+        ),
+      ),
+    );
+  }
+}
