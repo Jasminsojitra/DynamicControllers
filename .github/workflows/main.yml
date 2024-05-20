@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17.0.7+0-17.0.7b1000.6-10550314'
+          java-version: '17.0.2+8'
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
