@@ -8,6 +8,8 @@ on:
       - main
       - master
       - develop
+permissions:
+  contents: write
 name: "Build & Release"
 jobs:
   build:
