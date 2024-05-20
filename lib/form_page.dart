@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -191,13 +192,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         var valuesData = control.values![indexVal];
                         return Row(
                           children: <Widget>[
-                            Radio<String>(
-                              value: valuesData,
-                              groupValue: control.defaultValue,
-                              onChanged: (val) {
-                                control.defaultValue = val;
-                                setState(() {});
-                              },
+                            SizedBox(
+                              height: 30,
+                              child: Radio<String>(
+                                value: valuesData,
+                                groupValue: control.defaultValue,
+                                onChanged: (val) {
+                                  control.defaultValue = val;
+                                  setState(() {});
+                                },
+                              ),
                             ),
                             Text(valuesData),
                           ],
@@ -220,27 +224,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 5,
                   ),
                   ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: control.values!.length,
-                      itemBuilder: (context, indexVal) {
-                        var valuesData = control.values![indexVal];
-                        var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
-                        return CheckboxListTile(
-                          title: Text(valuesData),
-                          value: selectedValue == null ? false : true,
-                          onChanged: (val) {
-                            setState(() {
-                              var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
-                              if (selectedValue == null) {
-                                control.selectedValues!.add(valuesData);
-                              } else {
-                                control.selectedValues!.remove(selectedValue);
-                              }
-                            });
-                          },
-                        );
-                      })
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemCount: control.values!.length,
+                    itemBuilder: (context, indexVal) {
+                      var valuesData = control.values![indexVal];
+                      var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
+                      return Row(
+                        children: [
+                          SizedBox(
+                            height: 30,
+                            child: Checkbox(
+                                value: selectedValue == null ? false : true,
+                                onChanged: (val) {
+                                  setState(() {
+                                    var selectedValue = control.selectedValues!.where((element) => element == valuesData).singleOrNull;
+                                    if (selectedValue == null) {
+                                      control.selectedValues!.add(valuesData);
+                                    } else {
+                                      control.selectedValues!.remove(selectedValue);
+                                    }
+                                  });
+                                }),
+                          ),
+                          Text(valuesData),
+                        ],
+                      );
+                    },
+                  )
                 ],
               );
             } else if (control.type == 'Dropdown') {
