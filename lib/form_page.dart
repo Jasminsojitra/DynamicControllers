@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 import 'control_model.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  ControlsModel? controlForm;
+  MyHomePage({this.controlForm, super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -29,73 +30,77 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    var data = {
-      "form": {
-        "id": "12318391",
-        "header": "Header of the form",
-        "controls": [
-          {
-            "name": "Name of Project",
-            "type": "Textbox",
-            "header": "Project",
-            "values": [],
-            "defaultValue": "test",
-          },
-          {
-            "name": "Description",
-            "type": "TextArea",
-            "header": "Project Description",
-            "values": [],
-            "defaultValue": "",
-          },
-          {
-            "name": "Coutries",
-            "type": "Dropdown",
-            "header": "Select Countries",
-            "values": [
-              "India",
-              "US",
-              "UK",
-            ],
-            "defaultValue": ""
-          },
-          {
-            "name": "Country rank",
-            "type": "RadioButton",
-            "header": "Ranking",
-            "values": [
-              "1",
-              "3",
-            ],
-            "defaultValue": "1",
-          },
-          {
-            "name": "Hobbies",
-            "type": "CheckBox",
-            "header": "Hobbies",
-            "values": [
-              "Reading",
-              "Cricket",
-              "Footbool",
-            ],
-            "selectedValues": [
-              "Cricket",
-            ],
-          },
-          {
-            "name": "Birth Date",
-            "type": "Date",
-            "header": "Birth Date",
-            "values": [],
-            "defaultValue": "",
-            "minDate": "1996-05-18",
-            "maxDate": "",
-          },
-        ]
-      }
-    };
-    controlModel = ControlsModel.fromJson(data);
-    print(controlModel);
+    if (widget.controlForm == null) {
+      var data = {
+        "form": {
+          "id": "12318391",
+          "header": "Header of the form",
+          "controls": [
+            {
+              "name": "Name of Project",
+              "type": "Textbox",
+              "header": "Project",
+              "values": [],
+              "defaultValue": "",
+            },
+            {
+              "name": "Description",
+              "type": "TextArea",
+              "header": "Project Description",
+              "values": [],
+              "defaultValue": "",
+            },
+            {
+              "name": "Coutries",
+              "type": "Dropdown",
+              "header": "Select Countries",
+              "values": [
+                "India",
+                "US",
+                "UK",
+              ],
+              "defaultValue": ""
+            },
+            {
+              "name": "Country rank",
+              "type": "RadioButton",
+              "header": "Ranking",
+              "values": [
+                "1",
+                "3",
+              ],
+              "defaultValue": "1",
+            },
+            {
+              "name": "Hobbies",
+              "type": "CheckBox",
+              "header": "Hobbies",
+              "values": [
+                "Reading",
+                "Cricket",
+                "Footbool",
+              ],
+              "selectedValues": [
+                "Cricket",
+              ],
+            },
+            {
+              "name": "Birth Date",
+              "type": "Date",
+              "header": "Birth Date",
+              "values": [],
+              "defaultValue": "",
+              "minDate": "1996-05-18",
+              "maxDate": "",
+            },
+          ]
+        }
+      };
+      controlModel = ControlsModel.fromJson(data);
+      print(controlModel);
+    } else {
+      controlModel = widget.controlForm!;
+    }
   }
 
   @override
@@ -341,25 +346,37 @@ class _MyHomePageState extends State<MyHomePage> {
               return Container();
             }
           }),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: TextButton(
-          style: TextButton.styleFrom(
-              padding: EdgeInsets.all(15),
-              backgroundColor: Colors.deepPurple,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              )),
-          child: const Text(
-            "Submit",
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          onPressed: () {
-            print("Data");
-            print(jsonEncode(controlModel.form.controls));
-          },
-        ),
-      ),
+      bottomNavigationBar: widget.controlForm == null
+          ? Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                    padding: EdgeInsets.all(15),
+                    backgroundColor: Colors.deepPurple,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    )),
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                onPressed: () {
+                  print("Data");
+                  print(jsonEncode(controlModel.form.controls));
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyHomePage(
+                              controlForm: controlModel,
+                            )),
+                  );
+                },
+              ),
+            )
+          : SizedBox(
+              height: 0,
+            ),
     );
   }
 }
